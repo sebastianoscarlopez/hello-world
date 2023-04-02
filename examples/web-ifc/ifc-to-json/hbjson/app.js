@@ -1,5 +1,8 @@
 import { geometryTypes } from "./geometry-types";
 import { IfcAPI, IFCRELSPACEBOUNDARY, IFCSPACE, IFCWINDOW, IFCDOOR, IFCWALL, IFCWALLSTANDARDCASE } from "web-ifc/web-ifc-api";
+import {
+    Vector3
+} from "three";
 
 const ifcapi = new IfcAPI();
 ifcapi.SetWasmPath("../../../../");
@@ -29,59 +32,6 @@ async function LoadFile(ifcAsText) {
     const uint8array = new TextEncoder().encode(ifcAsText);
     const modelID = await OpenIfc(uint8array);
 
-    let lines = ifcapi.GetLineIDsWithType(modelID, IFCSPACE);
-   
-    let lineSize = lines.size();
-    let spaces = [];
-    for (let i = 0; i < lineSize; i++) {
-        // Getting the ElementID from Lines
-        let relatedID = lines.get(i);
-
-        // Getting Element Data using the relatedID
-        let relDefProps = ifcapi.GetLine(modelID, relatedID);
-        spaces.push(relDefProps);
-    }
-
-    let FACES = [];
-
-    let space2room = {};
-    let room2index = {};
-
-    let initalRooms = [];
-
-    spaces.map((space, i) => {
-        let roomId = generateUniqueId();
-        space2room[space.expressID] = roomId;
-        room2index[roomId] = i;
-        initalRooms.push({ identifier: roomId, faces: [], type: "Room", "properties": "RoomPropertiesAbridged" });
-    })
-
-
-    let hbjson = {
-        rooms: initalRooms
-    };
-
-
-    let linesBoundaries = ifcapi.GetLineIDsWithType(modelID, IFCRELSPACEBOUNDARY);
-
-    let faceBoundaries = []; // walls and slabs
-    let otherBoundaries = []; // windows and doors
-
-    for (let i = 0; i < linesBoundaries.size(); i++) {
-        let relatedID = linesBoundaries.get(i);
-        let boundary = ifcapi.GetLine(modelID, relatedID);
-   
-        let relatedElementId = boundary.RelatedBuildingElement;
-        let relatedElement = ifcapi.GetLine(modelID, relatedElementId.value);
-
-        let ifcType = relatedElement.constructor.name;
-        if (ifcType.includes("IfcWall") || ifcType.includes("IfcSlab")) {
-            faceBoundaries.push(boundary);
-        } else if (ifcType == "IfcDoor" || ifcType == "IfcWindow") {
-            otherBoundaries.push(boundary);
-        }
-    }
-
     function generateUniqueId() {
         let id = "";
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -98,6 +48,10 @@ async function LoadFile(ifcAsText) {
         } else if (bc == "INTERNAL") {
             return { "type": "Surface", "boundary_condition_objects": [] };
         }
+    }
+
+    function equalTolerance(num1, num2, tolerance) {
+        return Math.abs(num1 - num2) <= tolerance;
     }
 
     function processGeometry(boundary) {
@@ -188,13 +142,63 @@ async function LoadFile(ifcAsText) {
             })
         }
 
-        return { "outerPoints": outerPoints, "holes": holes }
+        return { "outerPoints": outerPoints, "holes": holes, plane: { n: zVec, o: C_vec, x: xVec } }
     }
 
 
+    let lines = ifcapi.GetLineIDsWithType(modelID, IFCSPACE);
+
+    let lineSize = lines.size();
+    let spaces = [];
+    for (let i = 0; i < lineSize; i++) {
+        // Getting the ElementID from Lines
+        let relatedID = lines.get(i);
+
+        // Getting Element Data using the relatedID
+        let relDefProps = ifcapi.GetLine(modelID, relatedID);
+        spaces.push(relDefProps);
+    }
+
+    let FACES = [];
+
+    let space2room = {};
+    let room2index = {};
+    let initalRooms = [];
+
+    spaces.map((space, i) => {
+        let roomId = generateUniqueId();
+        space2room[space.expressID] = roomId;
+        room2index[roomId] = i;
+        initalRooms.push({ identifier: roomId, faces: [], type: "Room", "properties": "RoomPropertiesAbridged" });
+    })
+
+    let hbjson = {
+        rooms: initalRooms
+    };
+
+    // Get the parent and children boundaries
+    let linesBoundaries = ifcapi.GetLineIDsWithType(modelID, IFCRELSPACEBOUNDARY);
+
+    let faceBoundaries = []; // walls and slabs
+    let otherBoundaries = []; // windows and doors
+
+    for (let i = 0; i < linesBoundaries.size(); i++) {
+        let relatedID = linesBoundaries.get(i);
+        let boundary = ifcapi.GetLine(modelID, relatedID);
+
+        let relatedElementId = boundary.RelatedBuildingElement;
+        let relatedElement = ifcapi.GetLine(modelID, relatedElementId.value);
+
+        let ifcType = relatedElement.constructor.name;
+        if (ifcType.includes("IfcWall") || ifcType.includes("IfcSlab")) {
+            faceBoundaries.push(boundary);
+        } else if (ifcType == "IfcDoor" || ifcType == "IfcWindow") {
+            otherBoundaries.push(boundary);
+        }
+    }
+
     let face2Ifc = {}
     let ifc2Face = {}
-
     let face2space = {}
 
     let walls = ifcapi.GetLineIDsWithType(modelID, IFCWALLSTANDARDCASE);
@@ -254,12 +258,12 @@ async function LoadFile(ifcAsText) {
                 } else {
                     door2wall[winExpressID] = [wallExpressID];
                 }
-
             }
         })
     }
 
     // Process the parent faces
+    FACES_MAPPING = {}
     faceBoundaries.map((boundary) => {
 
         // Get relating space and related element from the IfcRelDefineBoundary instance
@@ -273,19 +277,19 @@ async function LoadFile(ifcAsText) {
 
         let faceId = generateUniqueId();
 
-
-        if (faceId in face2space) {
-            face2space[faceId].push(relatingSpaceId);
-        } else {
-            face2space[faceId] = [relatingSpaceId];
-        }
+        face2space[faceId] = relatingSpaceId;
 
         // Compute the type and map the wall
         let faceType;
 
         if (relatedBuildingElement.constructor.name.includes("IfcWall")) {
             faceType = "Wall";
-            ifc2Face[relatedBuildingElement.expressID] = faceId;
+            if (relatedBuildingElement.expressID in ifc2Face) {
+                ifc2Face[relatedBuildingElement.expressID].push(faceId);
+            } else {
+                ifc2Face[relatedBuildingElement.expressID] = [faceId];
+            }
+
             face2Ifc[faceId] = relatedBuildingElement.expressID;
         }
         if (relatedBuildingElement.constructor.name == "IfcSlab") {
@@ -301,8 +305,9 @@ async function LoadFile(ifcAsText) {
             "geometry": {
                 "type": "Face3D",
                 "boundary": processedGeometry.outerPoints,
-                // "holes": processedGeometry.holes
+                // "holes": processedGeometry.holes // Holes for windows/doors should not be stored there
             },
+            "plane": processedGeometry.plane,
             "face_type": faceType,
             "boundary_condition": boundaryMapping(boundary.InternalOrExternalBoundary.value),
             "apertures": [],
@@ -314,7 +319,8 @@ async function LoadFile(ifcAsText) {
 
     })
 
-    // Now process the subfaces (apertures and doors)
+    // Process the subfaces (apertures and doors)
+    let SUBFACES = [];
     otherBoundaries.map((boundary) => {
 
         // Get relating space and related element from the IfcRelDefineBoundary instance
@@ -327,6 +333,8 @@ async function LoadFile(ifcAsText) {
         let processedGeometry = processGeometry(boundary);
 
         let faceId = generateUniqueId();
+
+        face2space[faceId] = relatingSpaceId;
 
         // Compute the type and retrieve the hosting wall
         let faceType;
@@ -357,41 +365,167 @@ async function LoadFile(ifcAsText) {
                 "boundary": processedGeometry.outerPoints,
                 "holes": processedGeometry.holes,
             },
+            "plane": processedGeometry.plane,
             "boundary_condition": boundaryMapping(boundary.InternalOrExternalBoundary.value),
             "properties": properties
         }
 
-        // Add Aperture/Door face to the correct parent face
-        FACES.map((pFace) => {
-            if (parentFace == pFace.identifier) {
-                if (faceType == "Aperture") {
-                    pFace.apertures.push(face);
-                } else if (faceType == "Door") {
-                    pFace.doors.push(face);
-                }
-            }
-        })
+        SUBFACES.push(face)
+
     })
 
-    // Starting tentative: match faces for boundary conditions
-    FACES.map((faceToCompare) => {
+    FACES.map((face) => {
+        FACES_MAPPING[face.identifier] = { ...face, subfaces: [] };
+    })
+
+    // Match subfaces to faces by comparing each subface with the faces of the same room
+    let subface2face = {}
+    let subface2Index = {}
+
+    const eps = 1e-10;
+    SUBFACES.map((subface) => {
         FACES.map((face) => {
-            if (face.identifier in face2Ifc && faceToCompare.identifier in face2Ifc) {
-                if (face2Ifc[faceToCompare.identifier] == face2Ifc[face.identifier] && (faceToCompare.identifier != face.identifier)) {
-                    if (face.boundary_condition.type != "Outdoors" && faceToCompare.boundary_condition.type != "Outdoors") {
-                        console.log(face2space, space2room);
+
+            if (face2space[subface.identifier] == face2space[face.identifier] && face.face_type == "Wall") {
+                // Test whether subface and face planes are coplanar
+                let subfaceNormal = new Vector3().fromArray(subface.plane.n);
+                let faceNormal = new Vector3().fromArray(face.plane.n);
+                let cp = subfaceNormal.cross(faceNormal);
+
+                if (cp.length() == 0) {
+                    // Test whether subface is contained in face
+                    // Check that each point of the subface is contained in the face
+                    let faceOrigin = new Vector3().fromArray(face.plane.o);
+                    let d = faceNormal.dot(faceOrigin.negate());
+
+                    let pointNumber = subface.geometry.boundary.length;
+                    let numberOnPlane = 0;
+
+                    subface.geometry.boundary.map((pt) => {
+                        let point = new Vector3().fromArray(pt);
+
+                        let projection = faceNormal.dot(point) + d;
+
+                        if (Math.abs(projection) < eps) {
+                            numberOnPlane += 1;
+                        }
+                    })
+
+                    if (pointNumber == numberOnPlane) {
+                        subface2face[subface.identifier] = face.identifier;
+                        FACES_MAPPING[face.identifier].subfaces.push(subface)
+
+                        if (subface.type == "Aperture") {
+                            FACES_MAPPING[face.identifier].apertures.push(subface);
+                            subface2Index[subface.identifier] = FACES_MAPPING[face.identifier].apertures.length - 1
+                        } else if (subface.type == "Door") {
+                            FACES_MAPPING[face.identifier].doors.push(subface);
+                            subface2Index[subface.identifier] = FACES_MAPPING[face.identifier].doors.length - 1
+                        }
                     }
                 }
             }
         })
     })
 
-    // Place Faces in correct Rooms
-    FACES.map((face) => {
-        faceId = face2space[face.identifier][0];
-        roomId = space2room[faceId];
+    // Match subfaces to subfaces of Surface boundary conditions
+    SUBFACES.map((subface) => {
+        if ((subface.type == "Door" || subface.type == "Aperture") && subface.boundary_condition.type == "Surface") {
+
+            // Get the parent face
+            if (subface.type == "Door") {
+                SUBFACES.map((doorFace) => {
+                    if (subface.type == doorFace.type && subface.identifier != doorFace.identifier) {
+                        let subfaceNormal = new Vector3().fromArray(subface.plane.n);
+                        let doorFaceNormal = new Vector3().fromArray(doorFace.plane.n);
+
+                        // Let's compare the normals, if they are changing over one direction only, the subfaces are parallel
+                        if (subfaceNormal.dot(doorFaceNormal) == -1) {
+                            let differingDimension;
+                            if (subfaceNormal.x != doorFaceNormal.x) { differingDimension = 0; }
+                            if (subfaceNormal.y != doorFaceNormal.y) { differingDimension = 1; }
+                            if (subfaceNormal.z != doorFaceNormal.z) { differingDimension = 2; }
+
+                            // Now let's find if the point coordinates only differ at the dimension where the normals differ
+                            // If they do, the subfaces are sibling
+                            let sumSubface = [0, 0, 0];
+                            let sumDoorface = [0, 0, 0];
+
+                            subface.geometry.boundary.map((point) => {
+                                sumSubface[0] += point[0];
+                                sumSubface[1] += point[1];
+                                sumSubface[2] += point[2];
+                            })
+
+                            doorFace.geometry.boundary.map((point) => {
+                                sumDoorface[0] += point[0];
+                                sumDoorface[1] += point[1];
+                                sumDoorface[2] += point[2];
+
+                            })
+
+                            let xMatch = equalTolerance(sumSubface[0], sumDoorface[0], eps);
+                            let yMatch = equalTolerance(sumSubface[1], sumDoorface[1], eps);
+                            let zMatch = equalTolerance(sumSubface[2], sumDoorface[2], eps);
+
+                            let sibling = false;
+
+                            if (differingDimension == 0) {
+                                if (!xMatch && yMatch && zMatch) {
+                                    sibling = true;
+                                }
+                            }
+
+                            if (differingDimension == 1) {
+                                if (!yMatch && xMatch && zMatch) {
+                                    sibling = true;
+                                }
+
+                            }
+
+                            if (differingDimension == 2) {
+                                if (!zMatch && xMatch && yMatch) {
+                                    sibling = true;
+                                }
+                            }
+
+                            // Add the boundary condition to both subfaces
+                            if (sibling) {
+                                boundary_condition_subface = {
+                                    type: "Surface",
+                                    boundary_condition_objects: [
+                                        doorFace.identifier,
+                                        FACES_MAPPING[subface2face[doorFace.identifier]].identifier,
+                                        space2room[face2space[FACES_MAPPING[subface2face[doorFace.identifier]].identifier]]
+                                    ]
+                                }
+
+                                boundary_condition_doorface = {
+                                    type: "Surface",
+                                    boundary_condition_objects: [
+                                        subface.identifier,
+                                        FACES_MAPPING[subface2face[subface.identifier]].identifier,
+                                        space2room[face2space[FACES_MAPPING[subface2face[subface.identifier]].identifier]]
+                                    ]
+                                }
+
+                                // Access the subface from the face object and add the boundary condition
+                                FACES_MAPPING[subface2face[subface.identifier]].doors[subface2Index[subface.identifier]] = boundary_condition_subface;
+                                FACES_MAPPING[subface2face[doorFace.identifier]].doors[subface2Index[doorFace.identifier]] = boundary_condition_doorface;
+                            }
+                        }
+                    }
+                })
+            }
+        }
+    })
+
+    Object.entries(FACES_MAPPING).map(([key, face]) => {
+        let faceId = face2space[face.identifier];
+        let roomId = space2room[faceId];
         hbjson.rooms[room2index[roomId]].faces.push(face);
     })
+
 
     // Save the HBJSON file
     const allItems = GetAllItems(modelID);
