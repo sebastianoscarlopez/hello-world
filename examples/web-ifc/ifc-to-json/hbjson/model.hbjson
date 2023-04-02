@@ -1,10 +1,10 @@
 {
   "rooms": [
     {
-      "identifier": "FMURt379",
+      "identifier": "e12lkAaO",
       "faces": [
         {
-          "identifier": "YQbOR2lu",
+          "identifier": "11q4S32h",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -61,18 +61,7 @@
           "apertures": [],
           "doors": [
             {
-              "type": "Surface",
-              "boundary_condition_objects": [
-                "zFDtwPXC",
-                "etrlOj5Q",
-                "zc0IERi2"
-              ]
-            }
-          ],
-          "properties": "FacePropertiesAbridged",
-          "subfaces": [
-            {
-              "identifier": "8YJn8wvk",
+              "identifier": "hhiFPqVU",
               "type": "Door",
               "geometry": {
                 "type": "Face3D",
@@ -124,14 +113,82 @@
               },
               "boundary_condition": {
                 "type": "Surface",
-                "boundary_condition_objects": []
+                "boundary_condition_objects": [
+                  "DhzqzkIy",
+                  "1n3OYjon",
+                  "RwEGi9Je"
+                ]
+              },
+              "properties": "DoorPropertiesAbridged"
+            }
+          ],
+          "properties": "FacePropertiesAbridged",
+          "subfaces": [
+            {
+              "identifier": "hhiFPqVU",
+              "type": "Door",
+              "geometry": {
+                "type": "Face3D",
+                "boundary": [
+                  [
+                    -6.75883368937316,
+                    -1.30372838041991,
+                    0
+                  ],
+                  [
+                    -5.84383368937316,
+                    -1.30372838041991,
+                    0
+                  ],
+                  [
+                    -5.84383368937316,
+                    -1.30372838041991,
+                    2.134
+                  ],
+                  [
+                    -6.75883368937316,
+                    -1.30372838041991,
+                    2.134
+                  ],
+                  [
+                    -6.75883368937316,
+                    -1.30372838041991,
+                    0
+                  ]
+                ],
+                "holes": []
+              },
+              "plane": {
+                "n": [
+                  0,
+                  -1,
+                  0
+                ],
+                "o": [
+                  -6.75883368937316,
+                  -1.30372838041991,
+                  0
+                ],
+                "x": [
+                  1,
+                  0,
+                  0
+                ]
+              },
+              "boundary_condition": {
+                "type": "Surface",
+                "boundary_condition_objects": [
+                  "DhzqzkIy",
+                  "1n3OYjon",
+                  "RwEGi9Je"
+                ]
               },
               "properties": "DoorPropertiesAbridged"
             }
           ]
         },
         {
-          "identifier": "6t1skEpK",
+          "identifier": "Oy9TtlDR",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -187,7 +244,7 @@
           },
           "apertures": [
             {
-              "identifier": "rKeQubHY",
+              "identifier": "uvV48CQf",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -244,7 +301,7 @@
               "properties": "AperturePropertiesAbridged"
             },
             {
-              "identifier": "mGkdDRK5",
+              "identifier": "tSTHu007",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -305,7 +362,7 @@
           "properties": "FacePropertiesAbridged",
           "subfaces": [
             {
-              "identifier": "rKeQubHY",
+              "identifier": "uvV48CQf",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -362,7 +419,7 @@
               "properties": "AperturePropertiesAbridged"
             },
             {
-              "identifier": "mGkdDRK5",
+              "identifier": "tSTHu007",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -421,7 +478,7 @@
           ]
         },
         {
-          "identifier": "ytXhvfLK",
+          "identifier": "ymE5W9zY",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -477,7 +534,7 @@
           },
           "apertures": [
             {
-              "identifier": "5nF498RA",
+              "identifier": "SSrcFVcq",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -534,7 +591,7 @@
               "properties": "AperturePropertiesAbridged"
             },
             {
-              "identifier": "vIAZ2oX5",
+              "identifier": "RhWG37pV",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -595,7 +652,7 @@
           "properties": "FacePropertiesAbridged",
           "subfaces": [
             {
-              "identifier": "5nF498RA",
+              "identifier": "SSrcFVcq",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -652,7 +709,7 @@
               "properties": "AperturePropertiesAbridged"
             },
             {
-              "identifier": "vIAZ2oX5",
+              "identifier": "RhWG37pV",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -711,7 +768,7 @@
           ]
         },
         {
-          "identifier": "ezgVaRcJ",
+          "identifier": "nDXwvNeS",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -771,7 +828,7 @@
           "subfaces": []
         },
         {
-          "identifier": "J6HPEddE",
+          "identifier": "hp5q2M8M",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -831,7 +888,7 @@
           "subfaces": []
         },
         {
-          "identifier": "v9yxncpZ",
+          "identifier": "h5yZl2yD",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -888,18 +945,7 @@
           "apertures": [],
           "doors": [
             {
-              "type": "Surface",
-              "boundary_condition_objects": [
-                "8YJn8wvk",
-                "YQbOR2lu",
-                "FMURt379"
-              ]
-            }
-          ],
-          "properties": "FacePropertiesAbridged",
-          "subfaces": [
-            {
-              "identifier": "Hsy6jLFQ",
+              "identifier": "qrvcjRjG",
               "type": "Door",
               "geometry": {
                 "type": "Face3D",
@@ -951,7 +997,75 @@
               },
               "boundary_condition": {
                 "type": "Surface",
-                "boundary_condition_objects": []
+                "boundary_condition_objects": [
+                  "hhiFPqVU",
+                  "11q4S32h",
+                  "e12lkAaO"
+                ]
+              },
+              "properties": "DoorPropertiesAbridged"
+            }
+          ],
+          "properties": "FacePropertiesAbridged",
+          "subfaces": [
+            {
+              "identifier": "qrvcjRjG",
+              "type": "Door",
+              "geometry": {
+                "type": "Face3D",
+                "boundary": [
+                  [
+                    -6.75883368937316,
+                    3.29627161958009,
+                    0
+                  ],
+                  [
+                    -6.75883368937316,
+                    3.29627161958009,
+                    2.134
+                  ],
+                  [
+                    -5.843833689373161,
+                    3.29627161958009,
+                    2.134
+                  ],
+                  [
+                    -5.84383368937316,
+                    3.29627161958009,
+                    0
+                  ],
+                  [
+                    -6.75883368937316,
+                    3.29627161958009,
+                    0
+                  ]
+                ],
+                "holes": []
+              },
+              "plane": {
+                "n": [
+                  0,
+                  1,
+                  0
+                ],
+                "o": [
+                  -6.75883368937316,
+                  3.29627161958009,
+                  0
+                ],
+                "x": [
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "boundary_condition": {
+                "type": "Surface",
+                "boundary_condition_objects": [
+                  "hhiFPqVU",
+                  "11q4S32h",
+                  "e12lkAaO"
+                ]
               },
               "properties": "DoorPropertiesAbridged"
             }
@@ -962,10 +1076,10 @@
       "properties": "RoomPropertiesAbridged"
     },
     {
-      "identifier": "zc0IERi2",
+      "identifier": "RwEGi9Je",
       "faces": [
         {
-          "identifier": "etrlOj5Q",
+          "identifier": "1n3OYjon",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -1022,18 +1136,7 @@
           "apertures": [],
           "doors": [
             {
-              "type": "Surface",
-              "boundary_condition_objects": [
-                "8YJn8wvk",
-                "YQbOR2lu",
-                "FMURt379"
-              ]
-            }
-          ],
-          "properties": "FacePropertiesAbridged",
-          "subfaces": [
-            {
-              "identifier": "zFDtwPXC",
+              "identifier": "DhzqzkIy",
               "type": "Door",
               "geometry": {
                 "type": "Face3D",
@@ -1085,14 +1188,82 @@
               },
               "boundary_condition": {
                 "type": "Surface",
-                "boundary_condition_objects": []
+                "boundary_condition_objects": [
+                  "hhiFPqVU",
+                  "11q4S32h",
+                  "e12lkAaO"
+                ]
+              },
+              "properties": "DoorPropertiesAbridged"
+            }
+          ],
+          "properties": "FacePropertiesAbridged",
+          "subfaces": [
+            {
+              "identifier": "DhzqzkIy",
+              "type": "Door",
+              "geometry": {
+                "type": "Face3D",
+                "boundary": [
+                  [
+                    -6.75883368937316,
+                    3.29627161958009,
+                    0
+                  ],
+                  [
+                    -6.75883368937316,
+                    3.29627161958009,
+                    2.134
+                  ],
+                  [
+                    -5.843833689373161,
+                    3.29627161958009,
+                    2.134
+                  ],
+                  [
+                    -5.84383368937316,
+                    3.29627161958009,
+                    0
+                  ],
+                  [
+                    -6.75883368937316,
+                    3.29627161958009,
+                    0
+                  ]
+                ],
+                "holes": []
+              },
+              "plane": {
+                "n": [
+                  0,
+                  1,
+                  0
+                ],
+                "o": [
+                  -6.75883368937316,
+                  3.29627161958009,
+                  0
+                ],
+                "x": [
+                  0,
+                  0,
+                  1
+                ]
+              },
+              "boundary_condition": {
+                "type": "Surface",
+                "boundary_condition_objects": [
+                  "hhiFPqVU",
+                  "11q4S32h",
+                  "e12lkAaO"
+                ]
               },
               "properties": "DoorPropertiesAbridged"
             }
           ]
         },
         {
-          "identifier": "6fiLfUMJ",
+          "identifier": "gzrjPXlR",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -1148,7 +1319,7 @@
           },
           "apertures": [
             {
-              "identifier": "nhLQkd5h",
+              "identifier": "2zH06TKG",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -1205,7 +1376,7 @@
               "properties": "AperturePropertiesAbridged"
             },
             {
-              "identifier": "Wf7NvXJX",
+              "identifier": "h6ptMnzs",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -1266,7 +1437,7 @@
           "properties": "FacePropertiesAbridged",
           "subfaces": [
             {
-              "identifier": "nhLQkd5h",
+              "identifier": "2zH06TKG",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -1323,7 +1494,7 @@
               "properties": "AperturePropertiesAbridged"
             },
             {
-              "identifier": "Wf7NvXJX",
+              "identifier": "h6ptMnzs",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -1382,7 +1553,7 @@
           ]
         },
         {
-          "identifier": "Ixx9CnvB",
+          "identifier": "cVtCkygt",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -1442,7 +1613,7 @@
           "subfaces": []
         },
         {
-          "identifier": "1NPYWiED",
+          "identifier": "cMS7Suo5",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -1498,7 +1669,7 @@
           },
           "apertures": [
             {
-              "identifier": "lTKXJsG6",
+              "identifier": "kqsc4als",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -1559,7 +1730,7 @@
           "properties": "FacePropertiesAbridged",
           "subfaces": [
             {
-              "identifier": "lTKXJsG6",
+              "identifier": "kqsc4als",
               "type": "Aperture",
               "geometry": {
                 "type": "Face3D",
@@ -1618,7 +1789,7 @@
           ]
         },
         {
-          "identifier": "G7Rg0XCA",
+          "identifier": "G6QWCPCi",
           "type": "Face",
           "geometry": {
             "type": "Face3D",
@@ -1678,7 +1849,7 @@
           "subfaces": []
         },
         {
-          "identifier": "R8tEFbzs",
+          "identifier": "AeFPQGwq",
           "type": "Face",
           "geometry": {
             "type": "Face3D",

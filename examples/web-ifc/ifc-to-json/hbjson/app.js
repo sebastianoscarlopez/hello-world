@@ -510,8 +510,8 @@ async function LoadFile(ifcAsText) {
                                 }
 
                                 // Access the subface from the face object and add the boundary condition
-                                FACES_MAPPING[subface2face[subface.identifier]].doors[subface2Index[subface.identifier]] = boundary_condition_subface;
-                                FACES_MAPPING[subface2face[doorFace.identifier]].doors[subface2Index[doorFace.identifier]] = boundary_condition_doorface;
+                                FACES_MAPPING[subface2face[subface.identifier]].doors[subface2Index[subface.identifier]]["boundary_condition"] = boundary_condition_subface;
+                                FACES_MAPPING[subface2face[doorFace.identifier]].doors[subface2Index[doorFace.identifier]]["boundary_condition"] = boundary_condition_doorface;
                             }
                         }
                     }
@@ -519,14 +519,14 @@ async function LoadFile(ifcAsText) {
             }
         }
     })
-
+   
     Object.entries(FACES_MAPPING).map(([key, face]) => {
         let faceId = face2space[face.identifier];
         let roomId = space2room[faceId];
         hbjson.rooms[room2index[roomId]].faces.push(face);
     })
 
-
+    
     // Save the HBJSON file
     const allItems = GetAllItems(modelID);
     const result = JSON.stringify(hbjson, undefined, 2);
